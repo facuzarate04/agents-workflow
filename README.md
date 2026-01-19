@@ -18,7 +18,7 @@ Minimal workflow plugin with interview, plan, work, and review phases.
 ## Installation
 
 ```bash
-claude plugins:install wf --marketplace github:YOUR_USERNAME/agents-workflow
+claude plugins:install wf --marketplace github:facuzarate04/agents-workflow
 ```
 
 ## Structure
