@@ -1,0 +1,15 @@
+{
+  "name": "agents-workflow",
+  "description": "Personal Claude Code plugin marketplace for development workflow automation",
+  "version": "1.0.0",
+  "author": {
+    "name": "Facundo Zarate"
+  },
+  "plugins": [
+    {
+      "name": "wf",
+      "path": "plugins/wf",
+      "description": "Lightweight development workflow - interview, plan, work, review"
+    }
+  ]
+}
