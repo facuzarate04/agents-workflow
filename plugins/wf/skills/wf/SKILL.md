@@ -1,3 +1,8 @@
+---
+name: wf
+description: Show workflow status and available commands. Triggers on /wf.
+---
+
 # WF Status Skill
 
 Show workflow status and available commands.

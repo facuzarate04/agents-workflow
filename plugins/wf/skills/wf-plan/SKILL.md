@@ -1,3 +1,8 @@
+---
+name: wf-plan
+description: Create a structured implementation plan from a description or spec file. Triggers on /wf:plan.
+---
+
 # WF Plan Skill
 
 Create a structured implementation plan from a description or spec file.

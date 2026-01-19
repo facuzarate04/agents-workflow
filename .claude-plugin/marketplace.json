@@ -12,7 +12,7 @@
     {
       "name": "wf",
       "description": "Lightweight development workflow - interview, plan, work, review with upfront permissions",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Facundo Zarate"
       },

@@ -1,3 +1,8 @@
+---
+name: wf-interview
+description: Gather requirements through focused questions to create a spec file. Triggers on /wf:interview.
+---
+
 # WF Interview Skill
 
 Gather requirements through focused questions to create a spec file.

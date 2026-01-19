@@ -1,3 +1,8 @@
+---
+name: wf-review
+description: Generate a review export file for external model review. Triggers on /wf:review.
+---
+
 # WF Review Skill
 
 Generate a review export file for external model review (ChatGPT, Claude web, etc.).

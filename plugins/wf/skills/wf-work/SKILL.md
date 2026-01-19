@@ -1,3 +1,8 @@
+---
+name: wf-work
+description: Execute a plan with upfront permission approval for uninterrupted work. Triggers on /wf:work.
+---
+
 # WF Work Skill
 
 Execute a plan with upfront permission approval for uninterrupted work.

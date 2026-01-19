@@ -1,6 +1,6 @@
 {
   "name": "wf",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight development workflow plugin. Interview, plan, work, review - with upfront permission requests for uninterrupted execution.",
   "author": {
     "name": "Facundo Zarate"
