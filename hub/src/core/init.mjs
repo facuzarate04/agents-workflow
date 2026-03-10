@@ -106,8 +106,8 @@ export async function runInit() {
   let slackConfig = null;
 
   if (wantSlack.toLowerCase() === "y") {
-    const botToken = await ask(rl, "Slack Bot Token (xoxb-...): ");
-    const appToken = await ask(rl, "Slack App Token (xapp-...): ");
+    const botToken = await ask(rl, "Slack Bot Token: ");
+    const appToken = await ask(rl, "Slack App Token: ");
     const defaultChannel = await ask(rl, "Default channel ID (optional): ", "");
     slackConfig = { botToken, appToken, defaultChannel };
   }

@@ -40,16 +40,20 @@ jobs:
 
       - name: Check no secrets in committed files
         run: |
-          # Fail if any real tokens are found in tracked files
-          if git grep -l 'xoxb-' -- ':!.github/' ':!*.example*' ':!CONTRIBUTING*' 2>/dev/null; then
-            echo "ERROR: Slack token found in committed files"
+          # Fail if real tokens are found (patterns match actual token formats, not hints)
+          if git grep -lP 'xoxb-[0-9]{10,}' -- ':!.github/' ':!*.example*' 2>/dev/null; then
+            echo "ERROR: Slack bot token found in committed files"
             exit 1
           fi
-          if git grep -l 'sk-proj-' -- ':!.github/' ':!*.example*' ':!CONTRIBUTING*' 2>/dev/null; then
+          if git grep -lP 'xapp-[0-9]-[A-Z0-9]{10,}' -- ':!.github/' ':!*.example*' 2>/dev/null; then
+            echo "ERROR: Slack app token found in committed files"
+            exit 1
+          fi
+          if git grep -lP 'sk-proj-[A-Za-z0-9]{20,}' -- ':!.github/' ':!*.example*' 2>/dev/null; then
             echo "ERROR: API key found in committed files"
             exit 1
           fi
-          if git grep -l 'ghp_' -- ':!.github/' ':!*.example*' ':!CONTRIBUTING*' 2>/dev/null; then
+          if git grep -lP 'ghp_[A-Za-z0-9]{30,}' -- ':!.github/' ':!*.example*' 2>/dev/null; then
             echo "ERROR: GitHub token found in committed files"
             exit 1
           fi
