@@ -1,245 +1,270 @@
-# Agent Hub CLI (MVP)
+# Agent Hub — Detailed Documentation
 
-Outside-in orchestrator for multi-agent development workflows.
+## PM Agent Flow
 
-## Goals
+The PM is the central orchestrator. Every user message flows through intent classification and action dispatch.
 
-- No repository installation required.
-- Chat-first CLI for natural language requests.
-- Central policy + per-repo policy layering.
-- Global MCP registry + per-repo MCP registry with trust levels.
-- Portable checkpoint artifacts for conversation compaction and handoffs.
+```mermaid
+flowchart TD
+    MSG[User Message] --> LOAD[Load thread state + memory context]
+    LOAD --> PM[PM analyzes with context]
+    PM --> CLASS{Intent Classification}
 
-## Quick Start
+    CLASS -->|direct answer| ANS[PM responds directly]
+    CLASS -->|CONSULT| CON[Delegate to expert roles]
+    CLASS -->|EXECUTE| EXEC[Spawn execution provider]
+    CLASS -->|BRAINSTORM| BRAIN[Multi-role brainstorm]
+    CLASS -->|CREATE_PR| PR[Create GitHub PR]
 
-```bash
-cd hub
-node ./bin/hub.mjs profile select work
-node ./bin/hub.mjs run --repo /path/to/repo "Analyze this repo and detect business rules"
-node ./bin/hub.mjs chat --repo /path/to/repo
+    CON --> PIPE{Pipeline?}
+    PIPE -->|single provider| ONE[Run role provider]
+    PIPE -->|multi-provider| MULTI[Run providers in parallel]
+    ONE --> ENV1[Normalize to envelope]
+    MULTI --> ENV2[Synthesize + envelope]
+    ENV1 --> SUM[Build expert summary]
+    ENV2 --> SUM
+
+    EXEC --> REVIEW{Review gate enabled?}
+    REVIEW -->|yes| RV[AI code review]
+    REVIEW -->|no| SKIP[Skip review]
+    RV --> RESULT[Final result]
+    SKIP --> RESULT
+
+    ANS --> MEM[Auto-capture to memory]
+    SUM --> MEM
+    RESULT --> MEM
+    MEM --> REPLY[Reply to user]
 ```
 
-Profile selection is mandatory before running workflows.
+## Commands Reference
 
-## Commands
+### Core
 
-- `hub run --repo <path> "<natural language request>"`
-- `hub chat --repo <path>`
-- `hub profile current`
-- `hub profile select <work|personal>`
-- `hub list`
-- `hub status <run-id>`
-- `hub start <run-id>`
-- `hub approve <run-id>`
-- `hub reject <run-id> [reason]`
-- `hub stop <run-id> [--cleanup]`
-- `hub commit <run-id> [--message "feat: ..."]`
-- `hub push <run-id>`
-- `hub pr <run-id> [--title "..."] [--body "..."] [--base main]`
-- `hub pushpr <run-id> [--title "..."] [--body "..."] [--base main]`
-- `hub slack notify <run-id> [--channel C123] [--thread 123.45]`
-- `hub slack socket`
-- `hub slack map channels`
-- `hub slack map list`
-- `hub slack map set --channel <#name|CID> --repo <path>`
-- `hub slack map remove --channel <#name|CID>`
-- `hub slack map resolve --channel <#name|CID>`
-- `hub team roles [--repo <path>]`
-- `hub team brainstorm --repo <path> "topic"`
-- `hub team provider-check --repo <path> --role <role-id> --topic "question"`
-- `hub team scaffold-role --repo <path> --id pm-data --name "PM Data" [--provider codex]`
-- `hub review --repo <path> [--goal "description"]`
+| Command | Description |
+|---------|-------------|
+| `hub init` | Interactive setup wizard |
+| `hub chat --repo <path>` | Conversational PM mode |
+| `hub run --repo <path> "task"` | Plan and execute a task |
+| `hub review --repo <path>` | Manual code review |
 
-## What happens on each run
+### Run Lifecycle
 
-1. Parse natural language and infer workflow (`understand`, `bugfix`, `refactor`, `feature`).
-2. Load policy context:
-- Global: `hub/config/global-policy.json`
-- Repo: `<repo>/.agent-hub/repo-profile.json` (optional)
-3. Load MCP context:
-- Global: `hub/config/mcp-registry.json`
-- Repo: `<repo>/.agent-hub/mcp-registry.json` (optional)
-4. Draft execution plan with gates.
-5. Persist artifacts under `hub/.state/runs/<run-id>/` and project checkpoint.
+| Command | Description |
+|---------|-------------|
+| `hub list` | List all runs |
+| `hub status <run-id>` | Check run status |
+| `hub start <run-id>` | Start execution (creates worktree) |
+| `hub approve <run-id>` | Approve a pending run |
+| `hub reject <run-id> [reason]` | Reject a run |
+| `hub stop <run-id> [--cleanup]` | Stop and optionally clean up |
+| `hub commit <run-id>` | Commit worktree changes |
+| `hub push <run-id>` | Push branch to origin |
+| `hub pr <run-id>` | Create GitHub PR |
+| `hub pushpr <run-id>` | Push + PR in one step |
 
-## Run lifecycle
+### Team
 
-1. `hub run ...` creates a planned run and writes artifacts.
-2. `hub start <run-id>` starts execution.
-   - Creates `branch + git worktree` for that run (isolated execution path).
-3. If MCPs marked `review-required` exist, run moves to `awaiting_approval`.
-4. `hub approve <run-id>` grants approval and allows execution.
-5. Worker evaluates gates (`tests`, `lint`, `typecheck`, `e2e`) from repository scripts.
-6. Final status becomes `completed` or `failed`.
-7. `hub stop <run-id> --cleanup` removes the run worktree and temporary branch.
-8. `hub commit <run-id>` commits changes from that run worktree.
-9. `hub push <run-id>` pushes run branch to `origin`.
-10. `hub pr <run-id>` opens a GitHub PR using `gh`.
-11. `hub pushpr <run-id>` performs push + PR in one step.
-12. `hub slack notify <run-id>` posts run summary into Slack.
-13. `hub slack socket` enables PM conversational mode in Slack (CEO talks to PM in natural language).
-14. `hub slack map ...` manages channel-to-repository routing.
+| Command | Description |
+|---------|-------------|
+| `hub team roles` | List configured roles |
+| `hub team brainstorm --repo <path> "topic"` | Multi-role brainstorm session |
+| `hub team provider-check --repo <path> --role <id> --topic "question"` | Test a provider |
+| `hub team scaffold-role --repo <path> --id <id> --name "Name"` | Add role to repo config |
 
-## Artifact layout
+### Memory
 
-```text
+| Command | Description |
+|---------|-------------|
+| `hub memory stats` | Show statistics |
+| `hub memory search "query"` | Full-text search |
+| `hub memory get <id>` | Get full observation |
+| `hub memory delete <id>` | Soft-delete observation |
+
+### Projects
+
+| Command | Description |
+|---------|-------------|
+| `hub project list` | List all projects |
+| `hub project show --name <n>` | Show project details |
+| `hub project add --name <n>` | Create project |
+| `hub project remove --name <n>` | Remove project |
+| `hub project repo add --project <n> --label <l> --path <p> --type <t>` | Add repo to project |
+
+### Slack
+
+| Command | Description |
+|---------|-------------|
+| `hub slack socket` | Start Slack bot |
+| `hub slack map channels` | List available channels |
+| `hub slack map set --channel <ch> --repo <path>` | Map channel to repo |
+| `hub slack map remove --channel <ch>` | Remove mapping |
+
+### Profiles
+
+| Command | Description |
+|---------|-------------|
+| `hub profile current` | Show active profile |
+| `hub profile select <name>` | Switch GitHub profile |
+
+## Provider System
+
+Providers are command-line AI tools that execute prompts. The hub supports any CLI that reads from stdin and writes to stdout.
+
+```mermaid
+graph TD
+    subgraph "Provider Execution"
+        PROMPT[Build prompt] --> FILE[Write to temp file]
+        FILE --> CMD[Execute provider command]
+        CMD --> STREAM[Parse stream-json output]
+        STREAM --> ENV[Normalize to envelope]
+    end
+
+    subgraph "Configured Providers"
+        CL["claude -p --output-format stream-json < prompt"]
+        CX["codex exec < prompt"]
+    end
+
+    CMD --> CL
+    CMD --> CX
+```
+
+### Provider pipelines
+
+For critical consultations, run multiple providers and synthesize:
+
+```json
+{
+  "providerPipelines": {
+    "technical-consult": {
+      "backend": ["claude-teams", "codex"],
+      "frontend": ["claude-teams", "codex"]
+    }
+  }
+}
+```
+
+Both providers answer the same question. Results are cross-validated and merged into a single response.
+
+### Command placeholders
+
+| Placeholder | Value |
+|-------------|-------|
+| `{{prompt_file}}` | Path to the prompt temp file |
+| `{{repo_path}}` | Target repository path |
+| `{{role_id}}` | Role identifier (e.g. `backend`) |
+| `{{role_name}}` | Role display name |
+| `{{topic}}` | Question/topic |
+
+## Standardized Envelope
+
+All provider responses are normalized to a standard envelope:
+
+```json
+{
+  "status": "completed",
+  "summary": "Brief assessment",
+  "recommendations": ["Action 1", "Action 2"],
+  "risks": ["Risk 1"],
+  "artifacts": [],
+  "next_recommended": "Suggested next step"
+}
+```
+
+Providers can return JSON directly or plain text — both are parsed and normalized. Legacy `{summary, assumptions, recommendations, risks, nextActions}` format is supported via backward-compatible mapping.
+
+## Run Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> planned: hub run
+    planned --> awaiting_approval: has review-required MCPs
+    planned --> running: hub start
+    awaiting_approval --> running: hub approve
+    awaiting_approval --> rejected: hub reject
+    running --> completed: gates pass
+    running --> failed: gates fail
+    completed --> [*]: hub commit + push + pr
+    failed --> [*]: hub stop --cleanup
+    rejected --> [*]
+```
+
+## Artifact Layout
+
+```
 hub/.state/
-├── runs/<run-id>/
-│   ├── task-spec.json
-│   ├── policy-context.json
-│   ├── mcp-context.json
-│   ├── execution-plan.json
-│   ├── gate-report.json
-│   ├── task-result.json
-│   └── checkpoint.json
-└── projects/<repo-slug>/
-    └── checkpoint.latest.json
+  runs/<run-id>/
+    task-spec.json          Input specification
+    policy-context.json     Merged policy rules
+    mcp-context.json        MCP registry snapshot
+    execution-plan.json     Steps + gates
+    gate-report.json        Gate evaluation results
+    task-result.json        Final output
+    checkpoint.json         Portable checkpoint
+  projects/<repo-slug>/
+    checkpoint.latest.json  Latest project checkpoint
 ```
 
-## Per-repo configuration
+## Slack Integration
 
-Copy these templates into each target repository:
+```mermaid
+sequenceDiagram
+    participant U as User (Slack)
+    participant BOT as Hub Socket Mode
+    participant PM as PM Agent
+    participant EXP as Expert Roles
 
-- `hub/examples/repo-profile.example.json` -> `<repo>/.agent-hub/repo-profile.json`
-- `hub/examples/repo-mcp-registry.example.json` -> `<repo>/.agent-hub/mcp-registry.json`
-
-This lets each project define custom lineamientos, checks and MCPs.
-You can also add implementation commands in `repo-profile.json` via `commands.implementByWorkflow`.
-You can define PR defaults in `repo-profile.json` via `prTemplate` (`titlePrefix`, `sections`).
-
-### Team provider wiring
-
-Role providers are command-driven and configurable in `team.json`:
-
-- `providers.providerCommands.claude-teams`
-- `providers.providerCommands.codex`
-
-Supported placeholders in commands:
-- `{{prompt_file}}`
-- `{{topic}}`
-- `{{repo_path}}`
-- `{{role_id}}`
-- `{{role_name}}`
-
-Example:
-
-```json
-{
-  "providers": {
-    "providerCommands": {
-      "claude-teams": "claude -p \"$(cat {{prompt_file}})\"",
-      "codex": "codex run \"$(cat {{prompt_file}})\""
-    }
-  }
-}
+    U->>BOT: @hub how should we redesign checkout?
+    BOT->>PM: handlePmMessage(text, thread)
+    Note over PM: Load memory context
+    Note over PM: Classify intent → CONSULT
+    PM->>EXP: Delegate to frontend + backend
+    EXP-->>PM: Expert responses (envelopes)
+    Note over PM: Synthesize + capture to memory
+    PM-->>BOT: Consolidated answer
+    BOT-->>U: Thread reply with recommendations
 ```
 
-### Provider collaboration (recommended)
+### Slack setup
 
-Instead of fallback-only behavior, you can run multiple providers per role and synthesize:
+1. Create a Slack app with Bot token scopes: `chat:write`, `app_mentions:read`
+2. Enable Socket Mode
+3. Subscribe to `app_mention` events
+4. Copy tokens to `hub/config/slack/.env`
+5. Run `hub slack socket`
 
-```json
-{
-  "providers": {
-    "providerPipelines": {
-      "technical-consult": {
-        "pm": ["claude-teams", "codex"],
-        "backend": ["codex", "claude-teams"]
-      }
-    }
-  }
-}
-```
+### Channel routing
 
-This runs both providers for the same role/topic and returns a consolidated result with cross-validation notes.
-
-## Slack setup
-
-1. Copy `hub/config/slack/.env.example` values into your shell environment.
-2. Create a Slack app with:
-- Bot token scopes: `chat:write`, `app_mentions:read`
-- Socket Mode enabled
-- Event subscription for `app_mention`
-3. Run `hub slack socket`.
-4. Talk to PM in natural language in a thread:
-- "Necesito opciones para rediseñar checkout"
-- "¿Cómo escalaríamos la API de pagos?"
-- "Aprobá el último run"
-
-The PM delegates technical questions to expert roles (backend/frontend/PO) and returns a consolidated recommendation.
-When provider commands are configured, delegation uses real executors (for example Claude Teams/Codex). Otherwise PM returns structured fallback analysis and prompts to dispatch.
-
-### Validate providers before PM consults
-
-Use this command to verify a role/provider can answer with enough quality:
+Map Slack channels to repositories or projects:
 
 ```bash
-node ./bin/hub.mjs team provider-check --repo /path/to/repo --role backend --topic "Como mejorar el SEO de la landing"
+hub slack map set --channel "#payments" --repo /path/to/payments
+hub slack map set --channel "#checkout" --project checkout
 ```
 
-If status is `insufficient` or `dispatch_required`, fix `providers.providerCommands` and retry.
+## MCP Server
 
-### Multi-repo Slack routing (recommended)
+The hub exposes 13 tools via Model Context Protocol for native Claude Code integration.
 
-Use one Slack channel per project and map channels to repositories in:
+### Setup
 
-- `hub/config/slack/repo-map.json`
+```bash
+claude mcp add agent-hub node /path/to/hub/bin/mcp.mjs
+```
 
-Example:
+Or manually add to `.claude.json`:
 
 ```json
 {
-  "channels": {
-    "C_PAYMENTS": "/path/to/payments-service",
-    "C_CHECKOUT": "/path/to/checkout-web"
-  }
-}
-```
-
-Resolution order:
-1. `repo-map.json` by `channel_id`
-2. `SLACK_DEFAULT_REPO`
-3. current process cwd
-
-## Code Review Gate
-
-Optional post-execution code review that runs automatically after EXECUTE completes.
-
-### Configuration
-
-Add `gates.codeReview` to your `team.json`:
-
-```json
-{
-  "gates": {
-    "codeReview": {
-      "enabled": true,
-      "provider": "claude-teams",
-      "rulesFile": "AGENTS.md",
-      "maxDiffLines": 3000
+  "mcpServers": {
+    "agent-hub": {
+      "command": "node",
+      "args": ["/path/to/hub/bin/mcp.mjs"]
     }
   }
 }
 ```
 
-When enabled, the PM will automatically review changed files after execution using the configured provider.
-The review checks for correctness, security issues, and adherence to project rules defined in `AGENTS.md` (or `CLAUDE.md` as fallback).
-
-Results are reported to the Slack thread with verdict (approve/request_changes), issue list, and severity levels.
-
-### Manual review
-
-Run a standalone review on any repository:
-
-```bash
-node ./bin/hub.mjs review --repo /path/to/repo --goal "Added user auth"
-```
-
-## MCP Server (Claude Code integration)
-
-The hub exposes an MCP server so Claude Code (and any MCP-compatible tool) can use hub capabilities as native tools.
-
-### Available tools
+### Tools
 
 | Tool | Description |
 |------|-------------|
@@ -257,24 +282,37 @@ The hub exposes an MCP server so Claude Code (and any MCP-compatible tool) can u
 | `session_start` | Start a memory session |
 | `session_end` | End a memory session |
 
-### Setup for Claude Code
+## Per-repo Configuration
 
-Add to your `.claude.json` (project) or `~/.claude.json` (global):
+Each target repository can have its own overrides:
+
+```
+my-repo/
+  .agent-hub/
+    team.json               Role/provider overrides
+    repo-profile.json        Custom policy rules
+    mcp-registry.json        MCP tool registry
+```
+
+Templates are in `hub/examples/`.
+
+## Code Review Gate
+
+Optional post-execution gate. Reviews git diff against project rules.
 
 ```json
 {
-  "mcpServers": {
-    "agent-hub": {
-      "command": "node",
-      "args": ["/path/to/agents-workflow/hub/bin/mcp.mjs"]
+  "gates": {
+    "codeReview": {
+      "enabled": true,
+      "provider": "claude-teams",
+      "rulesFile": "AGENTS.md",
+      "maxDiffLines": 3000
     }
   }
 }
 ```
 
-After restarting Claude Code, all hub tools are available as native MCP tools.
+Rules file resolution: `AGENTS.md` → `.agent-hub/AGENTS.md` → `CLAUDE.md`
 
-## Current scope
-
-This MVP currently covers planning, policy resolution, approval gating, basic gate execution, worktrees, commit/push and PR opening.
-Remote adapters (Telegram) and deeper code-editing workers are next.
+Verdicts: `approve` (no issues), `comment` (warnings only), `request_changes` (critical issues).
