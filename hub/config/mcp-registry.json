@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "mcps": [
+    {
+      "name": "openai-docs",
+      "scope": "global",
+      "type": "http",
+      "trust": "trusted",
+      "description": "Official OpenAI docs and API references"
+    },
+    {
+      "name": "playwright",
+      "scope": "global",
+      "type": "local",
+      "trust": "trusted",
+      "description": "Browser automation and UI flow validation"
+    },
+    {
+      "name": "github",
+      "scope": "global",
+      "type": "http",
+      "trust": "review-required",
+      "description": "Issues, PR metadata, and checks"
+    },
+    {
+      "name": "prod-observability",
+      "scope": "global",
+      "type": "http",
+      "trust": "blocked",
+      "description": "Production telemetry access requires explicit policy override"
+    }
+  ]
+}

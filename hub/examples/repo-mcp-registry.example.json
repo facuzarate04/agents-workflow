@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "mcps": [
+    {
+      "name": "payments-domain-docs",
+      "scope": "repo",
+      "type": "http",
+      "trust": "trusted",
+      "description": "Internal domain documentation for payment rules"
+    },
+    {
+      "name": "internal-admin-ui",
+      "scope": "repo",
+      "type": "local",
+      "trust": "review-required",
+      "description": "Playwright automation target for backoffice flows"
+    }
+  ]
+}

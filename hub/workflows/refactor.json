@@ -1,0 +1,44 @@
+{
+  "id": "refactor",
+  "name": "Refactor",
+  "summary": "Improve maintainability while preserving external behavior.",
+  "steps": [
+    {
+      "id": "boundaries",
+      "title": "Scope boundaries",
+      "objective": "Define in-scope and out-of-scope modules and contracts."
+    },
+    {
+      "id": "structural-changes",
+      "title": "Structural improvements",
+      "objective": "Apply safer abstractions, decomposition, and naming improvements."
+    },
+    {
+      "id": "behavior-guardrails",
+      "title": "Behavior guardrails",
+      "objective": "Ensure identical behavior through tests and snapshots."
+    },
+    {
+      "id": "risk-review",
+      "title": "Risk regression review",
+      "objective": "Confirm no hidden contract changes were introduced."
+    }
+  ],
+  "gates": [
+    {
+      "id": "tests",
+      "title": "Automated tests green",
+      "required": true
+    },
+    {
+      "id": "typecheck",
+      "title": "Type checks green",
+      "required": true
+    },
+    {
+      "id": "business-rules-review",
+      "title": "Business invariants unchanged or explicitly updated",
+      "required": true
+    }
+  ]
+}

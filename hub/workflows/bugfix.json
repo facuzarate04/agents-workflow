@@ -1,0 +1,44 @@
+{
+  "id": "bugfix",
+  "name": "Bugfix",
+  "summary": "Reproduce, isolate and patch defects with regression protection.",
+  "steps": [
+    {
+      "id": "reproduce",
+      "title": "Minimal reproduction",
+      "objective": "Document deterministic reproduction steps."
+    },
+    {
+      "id": "root-cause",
+      "title": "Root cause analysis",
+      "objective": "Identify the narrowest fix scope that resolves the issue."
+    },
+    {
+      "id": "patch",
+      "title": "Patch implementation",
+      "objective": "Apply minimal code changes and keep behavior stable elsewhere."
+    },
+    {
+      "id": "regression-tests",
+      "title": "Regression proof",
+      "objective": "Add or update tests preventing reoccurrence."
+    }
+  ],
+  "gates": [
+    {
+      "id": "tests",
+      "title": "Automated tests green",
+      "required": true
+    },
+    {
+      "id": "lint",
+      "title": "Lint and static checks green",
+      "required": true
+    },
+    {
+      "id": "typecheck",
+      "title": "Type checks green",
+      "required": true
+    }
+  ]
+}

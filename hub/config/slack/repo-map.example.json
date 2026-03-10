@@ -1,0 +1,12 @@
+{
+  "channels": {
+    "C01EXAMPLE1": {
+      "repoPath": "/path/to/your/repo",
+      "profile": "work"
+    },
+    "C01EXAMPLE2": {
+      "project": "my-project",
+      "profile": "personal"
+    }
+  }
+}

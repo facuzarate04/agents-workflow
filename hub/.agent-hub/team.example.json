@@ -1,0 +1,136 @@
+{
+  "version": "1.0",
+  "name": "my-team",
+  "providers": {
+    "brainstorm": "claude-teams",
+    "execution": "codex",
+    "fallback": "local-template",
+    "providerIdleTimeoutMs": 30000,
+    "providerMaxTimeoutMs": 300000,
+    "providerTimeoutMs": 300000,
+    "providerTimeoutByProviderMs": {
+      "claude-teams": 300000,
+      "codex": 300000
+    },
+    "roleTimeoutByModeMs": {
+      "technical-consult": 320000
+    },
+    "parallelPipelineByMode": {
+      "technical-consult": true
+    },
+    "strictRetryByMode": {
+      "technical-consult": false
+    },
+    "providerEnvExclude": {
+      "codex": ["OPENAI_API_KEY"],
+      "claude-teams": ["ANTHROPIC_API_KEY"]
+    },
+    "providerPipelines": {
+      "technical-consult": {
+        "pm": ["claude-teams", "codex"],
+        "po": ["claude-teams", "codex"],
+        "frontend": ["claude-teams", "codex"],
+        "backend": ["claude-teams", "codex"]
+      }
+    },
+    "executionProvider": "claude-teams",
+    "executionTimeoutMs": 600000,
+    "executionIdleTimeoutMs": 60000,
+    "executionEnv": {
+      "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    },
+    "providerCommands": {
+      "claude-teams": "claude -p --verbose --output-format stream-json < {{prompt_file}}",
+      "codex": "codex exec --skip-git-repo-check -c model='o4-mini' -c model_provider=openai < {{prompt_file}}"
+    },
+    "executionCommands": {
+      "claude-teams": "claude -p --verbose --output-format stream-json --permission-mode bypassPermissions --allowedTools Read,Write,Edit,Bash,Glob,Grep,Task,WebSearch,WebFetch < {{prompt_file}}"
+    }
+  },
+  "gates": {
+    "codeReview": {
+      "enabled": false,
+      "provider": "claude-teams",
+      "rulesFile": "AGENTS.md",
+      "maxDiffLines": 3000
+    }
+  },
+  "roles": [
+    {
+      "id": "ceo",
+      "name": "CEO",
+      "persona": "Strategic decision maker and final approver.",
+      "responsibilities": [
+        "Set priorities and business outcomes",
+        "Approve tradeoffs and timeline",
+        "Validate final decision package"
+      ],
+      "deliverables": ["Decision summary", "Priority ranking"],
+      "expertise": ["strategy", "prioritization"],
+      "provider": "local-template"
+    },
+    {
+      "id": "pm",
+      "name": "PM",
+      "persona": "Scope owner who translates goals into milestones and acceptance criteria.",
+      "responsibilities": [
+        "Define scope and sequencing",
+        "Clarify assumptions and dependencies",
+        "Track risks and mitigations"
+      ],
+      "deliverables": ["Milestones", "Acceptance criteria"],
+      "expertise": ["planning", "delivery", "scope"],
+      "provider": "claude-teams"
+    },
+    {
+      "id": "frontend",
+      "name": "Frontend Senior",
+      "persona": "Senior UI engineer focused on UX integrity and client architecture.",
+      "responsibilities": [
+        "Propose UI architecture changes",
+        "Assess UX regressions and state handling"
+      ],
+      "deliverables": ["UI technical plan", "E2E validation notes"],
+      "expertise": ["frontend", "ux", "e2e", "performance"],
+      "provider": "claude-teams"
+    },
+    {
+      "id": "backend",
+      "name": "Backend Senior",
+      "persona": "Senior backend engineer focused on domain, APIs and data consistency.",
+      "responsibilities": [
+        "Design backend changes",
+        "Validate API and data impact"
+      ],
+      "deliverables": ["Backend technical plan", "Risk and rollback plan"],
+      "expertise": ["backend", "api", "database", "security", "performance"],
+      "provider": "claude-teams"
+    },
+    {
+      "id": "tech-lead",
+      "name": "Tech Lead",
+      "persona": "Senior technical leader who orchestrates development teams.",
+      "responsibilities": [
+        "Break down goals into implementable tasks",
+        "Delegate work to specialists",
+        "Review code quality and architectural consistency"
+      ],
+      "deliverables": ["Task breakdown", "Implementation coordination", "Code review"],
+      "expertise": ["architecture", "code-review", "coordination", "delivery"],
+      "provider": "claude-teams"
+    },
+    {
+      "id": "qa",
+      "name": "QA Engineer",
+      "persona": "Quality engineer focused on E2E testing and regression detection.",
+      "responsibilities": [
+        "Write and run E2E tests",
+        "Validate UI/UX changes",
+        "Run test suites and report failures"
+      ],
+      "deliverables": ["Test results", "Regression report"],
+      "expertise": ["testing", "e2e", "accessibility"],
+      "provider": "codex"
+    }
+  ]
+}

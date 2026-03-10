@@ -1,0 +1,39 @@
+{
+  "id": "understand",
+  "name": "Understand",
+  "summary": "Build deep context of architecture and business rules before implementation.",
+  "steps": [
+    {
+      "id": "inventory",
+      "title": "Codebase inventory",
+      "objective": "Map modules, entry points, and dependencies."
+    },
+    {
+      "id": "business-rules",
+      "title": "Business rules extraction",
+      "objective": "Extract invariants, validations, and domain constraints."
+    },
+    {
+      "id": "risk-map",
+      "title": "Risk map",
+      "objective": "Identify high-risk hotspots and side effects."
+    },
+    {
+      "id": "checkpoint",
+      "title": "Checkpoint synthesis",
+      "objective": "Save portable context pack for future runs."
+    }
+  ],
+  "gates": [
+    {
+      "id": "architecture-review",
+      "title": "Architecture understanding is explicit",
+      "required": true
+    },
+    {
+      "id": "business-rules-review",
+      "title": "Business rules are documented",
+      "required": true
+    }
+  ]
+}

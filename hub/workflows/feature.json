@@ -1,0 +1,54 @@
+{
+  "id": "feature",
+  "name": "Feature",
+  "summary": "Deliver new functionality with explicit business impact analysis.",
+  "steps": [
+    {
+      "id": "requirements",
+      "title": "Requirements framing",
+      "objective": "Capture functional goals, constraints and success criteria."
+    },
+    {
+      "id": "design",
+      "title": "Design and contract impact",
+      "objective": "Evaluate architecture and API impact before coding."
+    },
+    {
+      "id": "implementation",
+      "title": "Incremental implementation",
+      "objective": "Ship in small validated chunks with guardrails."
+    },
+    {
+      "id": "verification",
+      "title": "Verification and rollout notes",
+      "objective": "Run checks and produce rollout + rollback guidance."
+    }
+  ],
+  "gates": [
+    {
+      "id": "tests",
+      "title": "Automated tests green",
+      "required": true
+    },
+    {
+      "id": "lint",
+      "title": "Lint and static checks green",
+      "required": true
+    },
+    {
+      "id": "typecheck",
+      "title": "Type checks green",
+      "required": true
+    },
+    {
+      "id": "e2e",
+      "title": "Critical user flow validated",
+      "required": false
+    },
+    {
+      "id": "business-rules-review",
+      "title": "Business rule changes are explicit",
+      "required": true
+    }
+  ]
+}

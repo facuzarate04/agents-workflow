@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gate-report.schema.json",
+  "title": "GateReport",
+  "type": "object",
+  "required": ["runId", "createdAt", "gates", "requiredGateCount"],
+  "properties": {
+    "runId": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "requiredGateCount": { "type": "integer", "minimum": 0 },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "status", "required", "rationale"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "status": { "enum": ["pending", "passed", "failed", "skipped"] },
+          "required": { "type": "boolean" },
+          "rationale": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "work": {
+      "account": "your-github-org-or-user",
+      "tokenEnv": "GH_TOKEN_WORK"
+    },
+    "personal": {
+      "account": "your-github-username",
+      "tokenEnv": "GH_TOKEN_PERSONAL"
+    }
+  }
+}

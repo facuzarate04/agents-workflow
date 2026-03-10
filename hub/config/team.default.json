@@ -1,0 +1,121 @@
+{
+  "version": "1.0",
+  "name": "core-product-team",
+  "providers": {
+    "brainstorm": "claude-teams",
+    "execution": "codex",
+    "fallback": "local-template",
+    "providerCommands": {
+      "claude-teams": "echo \"Configure claude-teams command in team config. Prompt file: {{prompt_file}}\"",
+      "codex": "echo \"Configure codex command in team config. Prompt file: {{prompt_file}}\""
+    }
+  },
+  "gates": {
+    "codeReview": {
+      "enabled": false,
+      "provider": "claude-teams",
+      "rulesFile": "AGENTS.md",
+      "maxDiffLines": 3000
+    }
+  },
+  "roles": [
+    {
+      "id": "ceo",
+      "name": "CEO",
+      "persona": "Strategic decision maker and final approver.",
+      "responsibilities": [
+        "Set priorities and business outcomes",
+        "Approve tradeoffs and timeline",
+        "Validate final decision package"
+      ],
+      "deliverables": [
+        "Decision summary",
+        "Priority ranking"
+      ],
+      "expertise": [
+        "strategy",
+        "prioritization"
+      ],
+      "provider": "local-template"
+    },
+    {
+      "id": "pm",
+      "name": "PM",
+      "persona": "Scope owner who translates goals into milestones and acceptance criteria.",
+      "responsibilities": [
+        "Define scope and sequencing",
+        "Clarify assumptions and dependencies",
+        "Track risks and mitigations"
+      ],
+      "deliverables": [
+        "Milestones",
+        "Acceptance criteria"
+      ],
+      "expertise": [
+        "planning",
+        "delivery",
+        "scope"
+      ],
+      "provider": "claude-teams"
+    },
+    {
+      "id": "po",
+      "name": "Product Owner",
+      "persona": "Business rules guardian.",
+      "responsibilities": [
+        "Validate domain constraints",
+        "Confirm acceptance from business perspective"
+      ],
+      "deliverables": [
+        "Business invariants",
+        "Functional acceptance checklist"
+      ],
+      "expertise": [
+        "business-rules",
+        "domain"
+      ],
+      "provider": "claude-teams"
+    },
+    {
+      "id": "frontend",
+      "name": "Frontend Senior",
+      "persona": "Senior UI engineer focused on UX integrity and client architecture.",
+      "responsibilities": [
+        "Propose UI architecture changes",
+        "Assess UX regressions and state handling"
+      ],
+      "deliverables": [
+        "UI technical plan",
+        "E2E validation notes"
+      ],
+      "expertise": [
+        "frontend",
+        "ux",
+        "e2e",
+        "performance"
+      ],
+      "provider": "codex"
+    },
+    {
+      "id": "backend",
+      "name": "Backend Senior",
+      "persona": "Senior backend engineer focused on domain, APIs and data consistency.",
+      "responsibilities": [
+        "Design backend changes",
+        "Validate API and data impact"
+      ],
+      "deliverables": [
+        "Backend technical plan",
+        "Risk and rollback plan"
+      ],
+      "expertise": [
+        "backend",
+        "api",
+        "database",
+        "security",
+        "performance"
+      ],
+      "provider": "codex"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "task-input.schema.json",
+  "title": "TaskInput",
+  "type": "object",
+  "required": [
+    "type",
+    "goal",
+    "createdAt",
+    "repoPath",
+    "riskHint",
+    "constraints",
+    "metadata"
+  ],
+  "properties": {
+    "type": {
+      "enum": ["understand", "bugfix", "refactor", "feature"]
+    },
+    "goal": {
+      "type": "string",
+      "minLength": 3
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "repoPath": {
+      "type": "string"
+    },
+    "branch": {
+      "type": ["string", "null"]
+    },
+    "riskHint": {
+      "enum": ["low", "medium", "high"]
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["channel", "requestedBy"],
+      "properties": {
+        "channel": { "type": "string" },
+        "requestedBy": { "type": "string" },
+        "language": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

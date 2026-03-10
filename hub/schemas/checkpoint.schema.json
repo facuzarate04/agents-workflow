@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "checkpoint.schema.json",
+  "title": "Checkpoint",
+  "type": "object",
+  "required": [
+    "runId",
+    "version",
+    "createdAt",
+    "objective",
+    "workflow",
+    "riskHint",
+    "businessRules",
+    "decisions",
+    "changedFiles",
+    "openQuestions",
+    "nextActions",
+    "sources"
+  ],
+  "properties": {
+    "runId": { "type": "string" },
+    "version": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "objective": { "type": "string" },
+    "workflow": { "type": "string" },
+    "riskHint": { "enum": ["low", "medium", "high"] },
+    "businessRules": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "decisions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "changedFiles": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "openQuestions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "nextActions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "task-result.schema.json",
+  "title": "TaskResult",
+  "type": "object",
+  "required": [
+    "runId",
+    "createdAt",
+    "status",
+    "workflow",
+    "goal",
+    "repoPath",
+    "riskHint",
+    "constraints",
+    "nextActions"
+  ],
+  "properties": {
+    "runId": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["planned", "awaiting_approval", "running", "completed", "failed", "cancelled"] },
+    "workflow": { "type": "string" },
+    "profile": { "type": ["string", "null"] },
+    "goal": { "type": "string" },
+    "repoPath": { "type": "string" },
+    "riskHint": { "enum": ["low", "medium", "high"] },
+    "constraints": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "approvals": {
+      "type": "object",
+      "properties": {
+        "required": { "type": "boolean" },
+        "approved": { "type": "boolean" },
+        "approvedAt": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    },
+    "execution": {
+      "type": "object",
+      "properties": {
+        "provider": { "type": "string" },
+        "worktreePath": { "type": "string" },
+        "branch": { "type": "string" },
+        "baseRef": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "cleanedUp": { "type": "boolean" },
+        "cleanedUpAt": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    },
+    "lastCommit": {
+      "type": "object",
+      "properties": {
+        "sha": { "type": "string" },
+        "message": { "type": "string" },
+        "committedAt": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    },
+    "lastPush": {
+      "type": "object",
+      "properties": {
+        "branch": { "type": "string" },
+        "pushedAt": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    },
+    "lastPr": {
+      "type": "object",
+      "properties": {
+        "url": { "type": ["string", "null"] },
+        "base": { "type": "string" },
+        "head": { "type": "string" },
+        "title": { "type": "string" },
+        "openedAt": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "at": { "type": "string", "format": "date-time" },
+          "type": { "type": "string" },
+          "actor": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "nextActions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

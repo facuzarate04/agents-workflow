@@ -1,0 +1,26 @@
+{
+  "name": "agent-hub",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Outside-in multi-agent development hub CLI for orchestrating AI-powered workflows",
+  "license": "MIT",
+  "bin": {
+    "hub": "./bin/hub.mjs",
+    "agent-hub-mcp": "./bin/mcp.mjs"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node ./bin/hub.mjs",
+    "chat": "node ./bin/hub.mjs chat",
+    "run": "node ./bin/hub.mjs run",
+    "validate": "node -e \"import('./src/cli.mjs')\"",
+    "mcp": "node ./bin/mcp.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "better-sqlite3": "^12.6.2",
+    "zod": "^4.3.6"
+  }
+}

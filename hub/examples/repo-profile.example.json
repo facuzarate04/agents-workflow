@@ -1,0 +1,41 @@
+{
+  "version": "1.0",
+  "repo": {
+    "name": "payments-service",
+    "defaultBranch": "main",
+    "language": "typescript"
+  },
+  "commands": {
+    "implementByWorkflow": {
+      "feature": "echo \"Implement feature workflow in this repo\"",
+      "bugfix": "echo \"Implement bugfix workflow in this repo\"",
+      "refactor": "echo \"Implement refactor workflow in this repo\"",
+      "understand": "echo \"Analyze repo for architecture and business rules\""
+    }
+  },
+  "prTemplate": {
+    "titlePrefix": "[payments]",
+    "sections": [
+      "Context",
+      "Business impact",
+      "Risk and rollback",
+      "Validation evidence"
+    ]
+  },
+  "rules": {
+    "requiredChecks": ["e2e"],
+    "forbiddenPatterns": ["breaking API changes without RFC"],
+    "requiredArtifacts": ["rollout-notes.md"],
+    "codeOwners": ["@payments-team"],
+    "notes": [
+      "Never charge card twice for the same idempotency key.",
+      "Refund and capture flows must preserve audit trail."
+    ]
+  },
+  "moduleProfiles": {
+    "src/domain/refunds": {
+      "requiredChecks": ["contract-tests"],
+      "notes": ["Refund creation requires reason code validation."]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "rules": {
+    "requiredChecks": [
+      "tests",
+      "lint",
+      "typecheck",
+      "business-rules-review"
+    ],
+    "forbiddenPatterns": [
+      "force push to main",
+      "skip tests without explicit approval",
+      "unsafe schema migration"
+    ],
+    "requiredArtifacts": [
+      "task-spec.json",
+      "execution-plan.json",
+      "gate-report.json",
+      "task-result.json",
+      "checkpoint.latest.json"
+    ],
+    "codeOwners": [],
+    "notes": [
+      "Prefer minimal-change diffs for bugfix workflows.",
+      "Document business rule impact before code changes.",
+      "Run e2e checks when user-facing flow is affected."
+    ]
+  }
+}

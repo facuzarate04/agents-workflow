@@ -1,0 +1,23 @@
+{
+  "name": "agents-workflow",
+  "owner": {
+    "name": "Facundo Zarate",
+    "url": "https://github.com/facuzarate04"
+  },
+  "metadata": {
+    "description": "Personal Claude Code plugin marketplace for development workflow automation",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "wf",
+      "description": "Lightweight development workflow - interview, plan, work, review with upfront permissions",
+      "version": "1.0.2",
+      "author": {
+        "name": "Facundo Zarate"
+      },
+      "tags": ["workflow", "planning", "development"],
+      "source": "./plugins/wf"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "projects": {
+    "my-app": {
+      "repos": {
+        "backend": {
+          "path": "/path/to/backend",
+          "type": "laravel",
+          "description": "API backend"
+        },
+        "frontend": {
+          "path": "/path/to/frontend",
+          "type": "nextjs",
+          "description": "Frontend app"
+        }
+      },
+      "defaultRepo": "backend"
+    }
+  }
+}

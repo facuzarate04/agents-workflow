@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Workflow exports (temporary review files)
+.workflow/exports/
+
+# Hub runtime state
+hub/.state/
+hub/node_modules/
+
+# Secrets & user-specific config
+.env
+hub/config/slack/.env
+hub/config/slack/repo-map.json
+hub/config/profiles.json
+hub/config/projects.json
+hub/.agent-hub/team.json
+.agent-hub/team.json

@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20, 22]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        working-directory: hub
+        run: npm install
+
+      - name: Verify CLI loads
+        working-directory: hub
+        run: node -e "import('./src/cli.mjs')"
+
+      - name: Verify all modules import
+        working-directory: hub
+        run: |
+          node -e "import('./src/core/review.mjs')"
+          node -e "import('./src/core/memory.mjs')"
+          node -e "import('./src/team/config.mjs')"
+          node -e "import('./src/team/providers.mjs')"
+          node -e "import('./src/integrations/pm-agent.mjs')"
+
+      - name: Check no secrets in committed files
+        run: |
+          # Fail if any real tokens are found in tracked files
+          if git grep -l 'xoxb-' -- ':!.github/' ':!*.example*' ':!CONTRIBUTING*' 2>/dev/null; then
+            echo "ERROR: Slack token found in committed files"
+            exit 1
+          fi
+          if git grep -l 'sk-proj-' -- ':!.github/' ':!*.example*' ':!CONTRIBUTING*' 2>/dev/null; then
+            echo "ERROR: API key found in committed files"
+            exit 1
+          fi
+          if git grep -l 'ghp_' -- ':!.github/' ':!*.example*' ':!CONTRIBUTING*' 2>/dev/null; then
+            echo "ERROR: GitHub token found in committed files"
+            exit 1
+          fi
+          echo "No secrets found in committed files"
