@@ -1,13 +1,43 @@
 {
-  "name": "agent-hub",
+  "name": "@facuzarate04/agent-hub",
   "version": "0.1.0",
   "type": "module",
-  "description": "Outside-in multi-agent development hub CLI for orchestrating AI-powered workflows",
+  "description": "Multi-agent development orchestrator with conversational PM, memory system, code review gate, and MCP server for Claude Code integration",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/facuzarate04/agents-workflow.git",
+    "directory": "hub"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "claude",
+    "codex",
+    "mcp",
+    "workflow",
+    "orchestrator",
+    "code-review",
+    "multi-agent"
+  ],
   "bin": {
-    "hub": "./bin/hub.mjs",
+    "agent-hub": "./bin/hub.mjs",
     "agent-hub-mcp": "./bin/mcp.mjs"
   },
+  "files": [
+    "bin/",
+    "src/",
+    "config/team.default.json",
+    "config/global-policy.json",
+    "config/mcp-registry.json",
+    "config/*.example.json",
+    "config/slack/.env.example",
+    "config/slack/repo-map.example.json",
+    ".agent-hub/team.example.json",
+    "examples/",
+    "schemas/",
+    "workflows/"
+  ],
   "engines": {
     "node": ">=18.0.0"
   },
@@ -15,8 +45,9 @@
     "start": "node ./bin/hub.mjs",
     "chat": "node ./bin/hub.mjs chat",
     "run": "node ./bin/hub.mjs run",
-    "validate": "node -e \"import('./src/cli.mjs')\"",
-    "mcp": "node ./bin/mcp.mjs"
+    "mcp": "node ./bin/mcp.mjs",
+    "test": "node --test tests/unit.test.mjs",
+    "validate": "node -e \"import('./src/cli.mjs')\""
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",

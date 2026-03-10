@@ -243,7 +243,7 @@ hub slack map set --channel "#checkout" --project checkout
 
 ## MCP Server
 
-The hub exposes 13 tools via Model Context Protocol for native Claude Code integration.
+The hub exposes 14 tools via Model Context Protocol for native Claude Code integration.
 
 ### Setup
 
@@ -275,6 +275,7 @@ Or manually add to `.claude.json`:
 | `memory_delete` | Soft-delete an observation |
 | `memory_stats` | Memory system statistics |
 | `code_review` | AI-powered code review on git diff |
+| `consult_experts` | Consult team expert roles on a technical topic |
 | `team_roles` | List team roles and providers |
 | `team_config` | Show merged team configuration |
 | `project_list` | List configured projects |

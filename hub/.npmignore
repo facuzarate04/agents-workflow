@@ -1,0 +1,9 @@
+.state/
+node_modules/
+tests/
+docs/
+.agent-hub/team.json
+config/profiles.json
+config/projects.json
+config/slack/.env
+config/slack/repo-map.json

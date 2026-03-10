@@ -5,6 +5,7 @@ import { z } from "zod";
 import { searchObservations, getObservation, saveObservation, getRelevantContext, formatContextForPrompt, getStats, softDelete, startSession, endSession } from "../core/memory.mjs";
 import { runCodeReview, resolveReviewConfig } from "../core/review.mjs";
 import { loadTeamConfig } from "../team/config.mjs";
+import { runRoleContribution, normalizeToEnvelope } from "../team/providers.mjs";
 import { loadProjects, getProject } from "../core/projects.mjs";
 
 const server = new McpServer({
@@ -239,6 +240,88 @@ server.tool(
   async (params) => {
     const loaded = await loadTeamConfig(params.repoPath || undefined);
     return { content: [{ type: "text", text: JSON.stringify(loaded.config, null, 2) }] };
+  }
+);
+
+server.tool(
+  "consult_experts",
+  "Consult one or more team expert roles on a technical topic. Each role uses its configured AI provider to analyze the question. Use this to get expert opinions on architecture, backend, frontend, QA, or any configured role.",
+  {
+    roles: z.array(z.string()).describe("Role IDs to consult (e.g. ['backend', 'frontend']). Use team_roles to see available IDs."),
+    topic: z.string().describe("The technical question or topic to consult about"),
+    repoPath: z.string().optional().describe("Repository path for context"),
+    context: z.string().optional().describe("Additional context to include in the consultation")
+  },
+  async (params) => {
+    const loaded = await loadTeamConfig(params.repoPath || undefined);
+    const allRoles = loaded.config.roles || [];
+
+    const selectedRoles = params.roles
+      .map((id) => allRoles.find((r) => r.id === id))
+      .filter(Boolean);
+
+    if (!selectedRoles.length) {
+      const available = allRoles.map((r) => r.id).join(", ");
+      return { content: [{ type: "text", text: `No matching roles found. Available: ${available}` }] };
+    }
+
+    const providerContext = {
+      repoPath: params.repoPath || process.cwd(),
+      providers: loaded.config.providers,
+      mode: "technical-consult"
+    };
+
+    const results = [];
+
+    for (const role of selectedRoles) {
+      try {
+        const result = await runRoleContribution({
+          role,
+          topic: params.topic,
+          context: providerContext,
+          pmAnalysis: params.context || null
+        });
+
+        const envelope = result.envelope || normalizeToEnvelope(
+          result.content?.summary || JSON.stringify(result.content || ""),
+          role.name
+        );
+
+        results.push({
+          role: role.id,
+          name: role.name,
+          status: result.status || "completed",
+          provider: result.provider || role.provider,
+          summary: envelope.summary,
+          recommendations: envelope.recommendations || [],
+          risks: envelope.risks || [],
+          durationMs: result.metrics?.totalDurationMs || result.metrics?.durationMs || null
+        });
+      } catch (err) {
+        results.push({
+          role: role.id,
+          name: role.name,
+          status: "error",
+          summary: `Error consulting ${role.name}: ${err.message}`
+        });
+      }
+    }
+
+    const lines = results.map((r) => {
+      const header = `## ${r.name} (${r.role}) — ${r.status}`;
+      const providerLine = r.provider ? `Provider: ${r.provider}` : "";
+      const summaryLine = r.summary || "No response";
+      const recsLine = r.recommendations?.length
+        ? `\nRecommendations:\n${r.recommendations.map((rec) => `  - ${rec}`).join("\n")}`
+        : "";
+      const risksLine = r.risks?.length
+        ? `\nRisks:\n${r.risks.map((risk) => `  - ${risk}`).join("\n")}`
+        : "";
+      const duration = r.durationMs ? `\n(${Math.round(r.durationMs / 1000)}s)` : "";
+      return [header, providerLine, summaryLine, recsLine, risksLine, duration].filter(Boolean).join("\n");
+    });
+
+    return { content: [{ type: "text", text: lines.join("\n\n---\n\n") }] };
   }
 );
 

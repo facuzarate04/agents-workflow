@@ -38,6 +38,10 @@ jobs:
           node -e "import('./src/team/providers.mjs')"
           node -e "import('./src/integrations/pm-agent.mjs')"
 
+      - name: Run tests
+        working-directory: hub
+        run: npm test
+
       - name: Check no secrets in committed files
         run: |
           # Fail if real tokens are found (patterns match actual token formats, not hints)

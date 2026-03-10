@@ -72,7 +72,7 @@ graph TB
 | **Code Execution** | AI-powered code changes in isolated worktrees with commit/push/PR |
 | **Memory System** | SQLite + FTS5 persistent memory across sessions with auto-capture |
 | **Code Review Gate** | Optional post-execution review against AGENTS.md/CLAUDE.md rules |
-| **MCP Server** | 13 native tools for Claude Code integration |
+| **MCP Server** | 14 native tools for Claude Code integration |
 | **3-Tier Config** | Defaults → global → per-repo configuration merge |
 | **Standardized Envelope** | Structured JSON responses from all providers |
 | **Multi-repo Projects** | Manage multiple repositories per project with Slack channel routing |
@@ -120,8 +120,9 @@ After restarting Claude Code, 13 tools are available natively:
 
 ```
 memory_search, memory_save, memory_get, memory_context,
-memory_delete, memory_stats, code_review, team_roles,
-team_config, project_list, project_show, session_start, session_end
+memory_delete, memory_stats, code_review, consult_experts,
+team_roles, team_config, project_list, project_show,
+session_start, session_end
 ```
 
 ## Configuration

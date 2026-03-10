@@ -112,7 +112,12 @@ export async function runInit() {
     slackConfig = { botToken, appToken, defaultChannel };
   }
 
-  // --- Step 6: First project (optional) ---
+  // --- Step 6: Claude Code MCP (optional) ---
+  console.log("\n── Claude Code Integration (optional) ──\n");
+  const wantMcp = await ask(rl, "Configure MCP server for Claude Code? (Y/n): ", "y");
+  const mcpEnabled = wantMcp.toLowerCase() !== "n";
+
+  // --- Step 7: First project (optional) ---
   console.log("\n── First Project (optional) ──\n");
   const wantProject = await ask(rl, "Add a project now? (y/N): ");
   let projectConfig = null;
@@ -194,6 +199,20 @@ export async function runInit() {
   await writeJsonFile(FILES.repoMap, repoMap);
   console.log("  ✓ config/slack/repo-map.json");
 
+  // MCP server setup for Claude Code
+  let mcpConfigured = false;
+  if (mcpEnabled) {
+    const mcpPath = path.join(HUB_ROOT, "bin", "mcp.mjs");
+    try {
+      await execFileAsync("claude", ["mcp", "add", "agent-hub", "node", mcpPath], { timeout: 10000 });
+      mcpConfigured = true;
+      console.log("  ✓ Claude Code MCP server configured");
+    } catch {
+      console.log("  ✗ Could not configure MCP (claude CLI not found or failed)");
+      console.log(`    Manual setup: claude mcp add agent-hub node ${mcpPath}`);
+    }
+  }
+
   // --- Summary ---
   const profileNames = Object.keys(profiles.profiles);
 
@@ -206,6 +225,7 @@ Profiles: ${profileNames.join(", ")}
 Provider: ${primaryProvider}${detected.claude.available && detected.codex.available ? " (both available)" : ""}
 Review gate: ${reviewEnabled ? "enabled" : "disabled"}
 Slack: ${slackConfig ? "configured" : "skipped"}
+Claude Code MCP: ${mcpConfigured ? "configured (restart Claude Code to activate)" : "not configured"}
 
 Next steps:
 
